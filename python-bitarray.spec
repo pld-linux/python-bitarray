@@ -1,6 +1,10 @@
+
+# TODO:
+#	- tests fail under Python 3.5
 #
 # Conditional build:
 %bcond_without	tests	# do not perform "make test"
+%bcond_without	python2 # Python 3.x module
 %bcond_without	python3 # Python 3.x module
 
 %define		module	bitarray
@@ -30,16 +34,16 @@ Requires:	python-modules
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-This module provides an object type which efficiently represents
-an array of booleans. Bitarrays are sequence types and behave very
-much like usual lists. Eight bits are represented by one byte in
-a contiguous block of memory. The user can select between two
-representations; little-endian and big-endian.
-All of the functionality is implemented in C. Methods for accessing
-the machine representation are provided. This can be useful when bit
-level access to binary files is required, such as portable bitmap
-image files (.pbm). Also, when dealing with compressed data which uses
-variable bit length encoding, you may find this module useful.
+This module provides an object type which efficiently represents an
+array of booleans. Bitarrays are sequence types and behave very much
+like usual lists. Eight bits are represented by one byte in a
+contiguous block of memory. The user can select between two
+representations; little-endian and big-endian. All of the
+functionality is implemented in C. Methods for accessing the machine
+representation are provided. This can be useful when bit level access
+to binary files is required, such as portable bitmap image files
+(.pbm). Also, when dealing with compressed data which uses variable
+bit length encoding, you may find this module useful.
 
 %package apidoc
 Summary:	%{module} API documentation
@@ -59,52 +63,26 @@ Requires:	python3-libs
 Requires:	python3-modules
 
 %description -n python3-%{module}
-This module provides an object type which efficiently represents
-an array of booleans. Bitarrays are sequence types and behave very
-much like usual lists. Eight bits are represented by one byte in
-a contiguous block of memory. The user can select between two
-representations; little-endian and big-endian.
-All of the functionality is implemented in C. Methods for accessing
-the machine representation are provided. This can be useful when bit
-level access to binary files is required, such as portable bitmap
-image files (.pbm). Also, when dealing with compressed data which uses
-variable bit length encoding, you may find this module useful.
+This module provides an object type which efficiently represents an
+array of booleans. Bitarrays are sequence types and behave very much
+like usual lists. Eight bits are represented by one byte in a
+contiguous block of memory. The user can select between two
+representations; little-endian and big-endian. All of the
+functionality is implemented in C. Methods for accessing the machine
+representation are provided. This can be useful when bit level access
+to binary files is required, such as portable bitmap image files
+(.pbm). Also, when dealing with compressed data which uses variable
+bit length encoding, you may find this module useful.
 
 %prep
 %setup -q -n %{module}-%{version}
 
-%if %{with python3}
-rm -rf build-3
-set -- *
-install -d build-3
-cp -a "$@" build-3
-find build-3 -name '*.py' | xargs sed -i '1s|^#!python|#!%{__python3}|'
-%endif
-
 %build
 %if %{with python2}
-%{__python} setup.py build --build-base build-2
+%py_build %{?with_tests:test --test-suite bitarray}
 %endif
 %if %{with python3}
-%{__python3} setup.py build --build-base build-3
-%endif
-
-# CC/CFLAGS is only for arch packages - remove on noarch packages
-CC="%{__cc}" \
-CFLAGS="%{rpmcflags}" \
-%{__python} setup.py build
-%{__python} setup.py \
-	build -b build-2
-
-%{?with_tests:%{__python} setup.py test}
-
-%if %{with python3}
-%{__python3} setup.py \
-	build -b build-3
-
-%if %{with tests}
-%{__python3} setup.py test
-%endif
+%py3_build %{?with_tests:test}
 %endif
 
 %if %{with doc}
@@ -115,17 +93,10 @@ rm -rf _build/html/_sources
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__python} setup.py install \
-	--skip-build \
-	--optimize=2 \
-	--root=$RPM_BUILD_ROOT
+%py_install
 
 %if %{with python3}
-%{__python3} setup.py \
-	build --build-base build-3 \
-	install \
-	--root=$RPM_BUILD_ROOT \
-	--optimize=2
+%py3_install
 %endif
 
 install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
@@ -150,8 +121,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{with python3}
 %files -n python3-%{module}
-%doc AUTHORS CHANGE_LOG README.rst TODO
 %defattr(644,root,root,755)
+%doc AUTHORS CHANGE_LOG README.rst TODO
 %dir %{py3_sitedir}/%{module}
 %{py3_sitedir}/%{module}/*.py*
 %{py3_sitedir}/%{module}/__pycache__
