@@ -21,7 +21,7 @@ BuildRequires:	python-devel
 BuildRequires:	python-distribute
 BuildRequires:	rpm-pythonprov
 # if py_postclean is used
-BuildRequires:	rpmbuild(macros) >= 1.219
+BuildRequires:	rpmbuild(macros) >= 1.710
 # when python3 present
 BuildRequires:	sed >= 4.0
 %if %{with python3}
