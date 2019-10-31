@@ -10,12 +10,13 @@
 %define		module	bitarray
 Summary:	Efficient arrays of booleans -- C extension
 Name:		python-%{module}
-Version:	0.8.1
-Release:	8
+Version:	1.0.1
+Release:	1
 License:	PSF
 Group:		Libraries/Python
-Source0:	https://pypi.python.org/packages/source/b/bitarray/%{module}-%{version}.tar.gz
-# Source0-md5:	3825184f54f4d93508a28031b4c65d3b
+# Source0:	https://pypi.python.org/packages/source/b/bitarray/%{module}-%{version}.tar.gz
+Source0:	https://github.com/ilanschnell/bitarray/archive/%{version}.tar.gz
+# Source0-md5:	56f55188d8d5361834db0bc7120f8998
 URL:		https://pypi.python.org/pypi/bitarray/
 BuildRequires:	python-devel
 BuildRequires:	python-distribute
@@ -79,10 +80,22 @@ bit length encoding, you may find this module useful.
 
 %build
 %if %{with python2}
-%py_build %{?with_tests:test --test-suite bitarray}
+%py_build
+%if %{with tests}
+cd build-2
+PYTHONPATH=$(pwd)/$(echo lib.linux-*) \
+%{__python} -c 'import bitarray; bitarray.test()'
+cd ..
+%endif
 %endif
 %if %{with python3}
-%py3_build %{?with_tests:test}
+%py3_build
+%if %{with tests}
+cd build-3
+PYTHONPATH=$(pwd)/$(echo lib.linux-*) \
+%{__python3} -c 'import bitarray; bitarray.test()'
+cd ..
+%endif
 %endif
 
 %if %{with doc}
