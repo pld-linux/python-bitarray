@@ -1,6 +1,3 @@
-
-# TODO:
-#	- tests fail under Python 3.5
 #
 # Conditional build:
 %bcond_without	tests	# do not perform "make test"
@@ -15,8 +12,8 @@ Release:	1
 License:	PSF
 Group:		Libraries/Python
 # Source0:	https://pypi.python.org/packages/source/b/bitarray/%{module}-%{version}.tar.gz
-Source0:	https://github.com/ilanschnell/bitarray/archive/%{version}.tar.gz
-# Source0-md5:	56f55188d8d5361834db0bc7120f8998
+Source0:	https://github.com/ilanschnell/bitarray/archive/%{version}/%{module}-%{version}.tar.gz
+# Source0-md5:	046fce932e24c8ce717500b129750f9c
 URL:		https://pypi.python.org/pypi/bitarray/
 BuildRequires:	python-devel
 BuildRequires:	python-distribute
@@ -115,7 +112,6 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 cp -a examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
-# change %{py_sitedir} to %{py_sitescriptdir} for 'noarch' packages!
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}
 
@@ -125,7 +121,6 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc AUTHORS CHANGE_LOG README.rst TODO
-# change %{py_sitedir} to %{py_sitescriptdir} for 'noarch' packages!
 %dir %{py_sitedir}/%{module}
 %{py_sitedir}/%{module}/*.py[co]
 %attr(755,root,root) %{py_sitedir}/%{module}/*.so
