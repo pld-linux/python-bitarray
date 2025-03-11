@@ -8,7 +8,7 @@
 Summary:	Efficient arrays of booleans -- C extension
 Name:		python-%{module}
 Version:	1.0.1
-Release:	8
+Release:	9
 License:	PSF
 Group:		Libraries/Python
 # Source0:	https://pypi.python.org/packages/source/b/bitarray/%{module}-%{version}.tar.gz
